@@ -380,123 +380,116 @@
   </div>
 
   <script>
-    const GOOGLE_SHEETS_URL = 'https://script.google.com/macros/s/AKfycbwpED2BIIRvx_oc0wk-EnIaJWaNf-Uw75trKYWTPltkLXV28gaajcKdJCEQcx4gHtRt/exec';
+  const WEBAPP_URL = 'https://script.google.com/macros/s/AKfycbwpED2BIIRvx_oc0wk-EnIaJWaNf-Uw75trKYWTPltkLXV28gaajcKdJCEQcx4gHtRt/exec';
+  const PROXY = 'https://cors.isaacadarneh.com/';
 
-    let juegos = [];
+  let juegos = [];
 
-    async function cargarDatos() {
-      try {
-        const response = await fetch(GOOGLE_SHEETS_URL, {
-          method: 'GET'
-        });
-        const datos = await response.json();
-        juegos = datos || [];
-        mostrarJuegos();
-      } catch (error) {
-        console.error('Error cargando datos:', error);
-        mostrarMensaje('⚠️ No se pudieron cargar los datos', 'error');
-        juegos = [];
-        mostrarJuegos();
-      }
+  async function cargarDatos() {
+    try {
+      const response = await fetch(PROXY + WEBAPP_URL, { method: 'GET' });
+      const datos = await response.json();
+      juegos = datos || [];
+      mostrarJuegos();
+    } catch (error) {
+      console.error('Error cargando datos:', error);
+      mostrarMensaje('⚠️ No se pudieron cargar los datos', 'error');
+      juegos = [];
+      mostrarJuegos();
     }
+  }
 
-    document.getElementById('formulario').addEventListener('submit', async (e) => {
-      e.preventDefault();
+  document.getElementById('formulario').addEventListener('submit', async (e) => {
+    e.preventDefault();
 
-      const nuevoJuego = {
-        titulo: document.getElementById('titulo').value,
-        consola: document.getElementById('consola').value,
-        año: document.getElementById('año').value,
-        estado: document.getElementById('estado').value,
-        precio: document.getElementById('precio').value
-      };
+    const nuevoJuego = {
+      titulo: document.getElementById('titulo').value,
+      consola: document.getElementById('consola').value,
+      año: document.getElementById('año').value,
+      estado: document.getElementById('estado').value,
+      precio: document.getElementById('precio').value
+    };
 
-      const body = new URLSearchParams(nuevoJuego);
+    const body = new URLSearchParams(nuevoJuego);
 
-      try {
-        await fetch(GOOGLE_SHEETS_URL, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8'
-          },
-          body
-        });
-
-        const modal = document.getElementById('modalExito');
-        modal.classList.add('show');
-        setTimeout(() => {
-          modal.classList.remove('show');
-        }, 1500);
-
-        document.getElementById('formulario').reset();
-        cargarDatos();
-      } catch (error) {
-        console.error('Error:', error);
-        mostrarMensaje('⚠️ Error al guardar', 'error');
-      }
-    });
-
-    document.getElementById('btnLimpiar').addEventListener('click', () => {
-      if (juegos.length === 0) {
-        mostrarMensaje('⚠️ No hay juegos para borrar', 'error');
-        setTimeout(() => {
-          document.getElementById('mensaje').style.display = 'none';
-        }, 2000);
-        return;
-      }
-
-      if (confirm('⚠️ Esto solo borra la vista, NO la hoja. ¿Continuar?')) {
-        juegos = [];
-        mostrarJuegos();
-        mostrarMensaje('🗑️ Vista limpiada (no se ha borrado la hoja)', 'success');
-        setTimeout(() => {
-          document.getElementById('mensaje').style.display = 'none';
-        }, 2000);
-      }
-    });
-
-    function mostrarMensaje(texto, tipo) {
-      const mensaje = document.getElementById('mensaje');
-      mensaje.textContent = texto;
-      mensaje.className = `mensaje ${tipo}`;
-    }
-
-    function mostrarJuegos() {
-      const lista = document.getElementById('lista');
-      const stats = document.getElementById('stats');
-
-      if (juegos.length === 0) {
-        lista.innerHTML = '<p class="empty">Aún no hay juegos. ¡Añade el primero!</p>';
-        stats.style.display = 'none';
-        return;
-      }
-
-      let html = '';
-      let total = 0;
-
-      juegos.forEach((juego, index) => {
-        const precio = Number(juego.precio) || 0;
-        total += precio;
-        html += `
-          <div class="juego">
-            <div class="juego-content">
-              <div class="juego-titulo">${juego.titulo}</div>
-              <div class="juego-info">
-                <strong>${juego.consola}</strong> • ${juego.año} • ${juego.estado}
-              </div>
-              <div class="juego-precio">💰 €${precio.toFixed(2)}</div>
-            </div>
-          </div>
-        `;
+    try {
+      await fetch(PROXY + WEBAPP_URL, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8'
+        },
+        body
       });
 
-      lista.innerHTML = html;
-      document.getElementById('total').textContent = total.toFixed(2);
-      document.getElementById('cantidad').textContent = juegos.length;
-      stats.style.display = 'block';
+      const modal = document.getElementById('modalExito');
+      modal.classList.add('show');
+      setTimeout(() => modal.classList.remove('show'), 1500);
+
+      document.getElementById('formulario').reset();
+      cargarDatos();
+    } catch (error) {
+      console.error('Error:', error);
+      mostrarMensaje('⚠️ Error al guardar', 'error');
+    }
+  });
+
+  document.getElementById('btnLimpiar').addEventListener('click', () => {
+    if (juegos.length === 0) {
+      mostrarMensaje('⚠️ No hay juegos para borrar', 'error');
+      return;
     }
 
-    cargarDatos();
-  </script>
+    if (confirm('⚠️ Esto solo borra la vista, NO la hoja. ¿Continuar?')) {
+      juegos = [];
+      mostrarJuegos();
+      mostrarMensaje('🗑️ Vista limpiada (no se ha borrado la hoja)', 'success');
+    }
+  });
+
+  function mostrarMensaje(texto, tipo) {
+    const mensaje = document.getElementById('mensaje');
+    mensaje.textContent = texto;
+    mensaje.className = `mensaje ${tipo}`;
+  }
+
+  function mostrarJuegos() {
+    const lista = document.getElementById('lista');
+    const stats = document.getElementById('stats');
+
+    if (!juegos || juegos.length === 0) {
+      lista.innerHTML = '<p class="empty">Aún no hay juegos. ¡Añade el primero!</p>';
+      stats.style.display = 'none';
+      return;
+    }
+
+    let html = '';
+    let total = 0;
+
+    juegos.forEach((juego) => {
+      const precio = Number(juego.precio) || 0;
+      total += precio;
+      html += `
+        <div class="juego">
+          <div class="juego-content">
+            <div class="juego-titulo">${juego.titulo}</div>
+            <div class="juego-info">
+              <strong>${juego.consola}</strong> • ${juego.año} • ${juego.estado}
+            </div>
+            <div class="juego-precio">💰 €${precio.toFixed(2)}</div>
+          </div>
+        </div>
+      `;
+    });
+
+    lista.innerHTML = html;
+    document.getElementById('total').textContent = total.toFixed(2);
+    document.getElementById('cantidad').textContent = juegos.length;
+    stats.style.display = 'block';
+  }
+
+  cargarDatos();
+</script>
+
 </body>
 </html>
+
