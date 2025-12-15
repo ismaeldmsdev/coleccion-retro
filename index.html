@@ -5,8 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>📦 Colección Retro</title>
   <style>
-    /* TODO tu CSS tal cual, lo puedes pegar aquí sin tocarlo */
-    /* ... (usa exactamente el CSS que ya tenías) ... */
+    /* TODO: pega aquí exactamente el CSS que ya tenías, sin tocarlo */
   </style>
 </head>
 <body>
@@ -83,7 +82,7 @@
         <p>⏳ Cargando datos...</p>
       </div>
 
-      <button class="btn-danger" id="btnLimpiar">🗑️ Limpiar toda la colección (solo visual)</button>
+      <button class="btn-danger" id="btnLimpiar">🗑️ Limpiar toda la colección (solo vista)</button>
     </div>
   </div>
 
@@ -96,18 +95,27 @@
   </div>
 
   <script>
+    const GOOGLE_SHEETS_URL = 'https://script.google.com/macros/s/AKfycbw54L6UEgeRtG9eIcF4cdOKUDPNDmi5kd9fIfi8Dv9ny1ITbId84-LuHVq4Qw4dpWWx/exec';
+
     let juegos = [];
 
-    function cargarDatos() {
-      google.script.run
-        .withSuccessHandler((datos) => {
-          juegos = datos || [];
-          mostrarJuegos();
-        })
-        .getJuegos();
+    async function cargarDatos() {
+      try {
+        const response = await fetch(GOOGLE_SHEETS_URL, {
+          method: 'GET'
+        });
+        const datos = await response.json();
+        juegos = datos || [];
+        mostrarJuegos();
+      } catch (error) {
+        console.error('Error cargando datos:', error);
+        mostrarMensaje('⚠️ No se pudieron cargar los datos', 'error');
+        juegos = [];
+        mostrarJuegos();
+      }
     }
 
-    document.getElementById('formulario').addEventListener('submit', (e) => {
+    document.getElementById('formulario').addEventListener('submit', async (e) => {
       e.preventDefault();
 
       const nuevoJuego = {
@@ -118,33 +126,47 @@
         precio: document.getElementById('precio').value
       };
 
-      google.script.run
-        .withSuccessHandler(() => {
-          const modal = document.getElementById('modalExito');
-          modal.classList.add('show');
-          setTimeout(() => {
-            modal.classList.remove('show');
-          }, 1500);
+      const body = new URLSearchParams(nuevoJuego);
 
-          document.getElementById('formulario').reset();
-          cargarDatos();
-        })
-        .withFailureHandler((err) => {
-          console.error(err);
-          mostrarMensaje('⚠️ Error al guardar', 'error');
-        })
-        .addJuego(nuevoJuego);
+      try {
+        await fetch(GOOGLE_SHEETS_URL, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8'
+          },
+          body
+        });
+
+        const modal = document.getElementById('modalExito');
+        modal.classList.add('show');
+        setTimeout(() => {
+          modal.classList.remove('show');
+        }, 1500);
+
+        document.getElementById('formulario').reset();
+        cargarDatos();
+      } catch (error) {
+        console.error('Error:', error);
+        mostrarMensaje('⚠️ Error al guardar', 'error');
+      }
     });
 
     document.getElementById('btnLimpiar').addEventListener('click', () => {
       if (juegos.length === 0) {
-        mostrarMensaje('⚠️ No hay juegos para borrar (solo visualmente)', 'error');
+        mostrarMensaje('⚠️ No hay juegos para borrar', 'error');
+        setTimeout(() => {
+          document.getElementById('mensaje').style.display = 'none';
+        }, 2000);
         return;
       }
-      if (confirm('Esto solo limpia la vista, no borra de la hoja. ¿Continuar?')) {
+
+      if (confirm('⚠️ Esto solo borra la vista, NO la hoja. ¿Continuar?')) {
         juegos = [];
         mostrarJuegos();
         mostrarMensaje('🗑️ Vista limpiada (no se ha borrado la hoja)', 'success');
+        setTimeout(() => {
+          document.getElementById('mensaje').style.display = 'none';
+        }, 2000);
       }
     });
 
@@ -158,7 +180,7 @@
       const lista = document.getElementById('lista');
       const stats = document.getElementById('stats');
 
-      if (!juegos || juegos.length === 0) {
+      if (juegos.length === 0) {
         lista.innerHTML = '<p class="empty">Aún no hay juegos. ¡Añade el primero!</p>';
         stats.style.display = 'none';
         return;
@@ -168,7 +190,8 @@
       let total = 0;
 
       juegos.forEach((juego, index) => {
-        total += Number(juego.precio) || 0;
+        const precio = Number(juego.precio) || 0;
+        total += precio;
         html += `
           <div class="juego">
             <div class="juego-content">
@@ -176,9 +199,10 @@
               <div class="juego-info">
                 <strong>${juego.consola}</strong> • ${juego.año} • ${juego.estado}
               </div>
-              <div class="juego-precio">💰 €${Number(juego.precio).toFixed(2)}</div>
+              <div class="juego-precio">💰 €${precio.toFixed(2)}</div>
             </div>
-          </div>`;
+          </div>
+        `;
       });
 
       lista.innerHTML = html;
@@ -187,7 +211,7 @@
       stats.style.display = 'block';
     }
 
-    // Cargar datos al abrir la app
+    // Cargar datos al abrir
     cargarDatos();
   </script>
 </body>
