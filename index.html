@@ -382,65 +382,64 @@
     
     <script>
     // URL principal (URL_2 - la que escribirá en ambas hojas)
-    const GOOGLE_SHEETS_URL = 'https://script.google.com/macros/s/AKfycbyBQ8iMqK2YTKuOye3_eKJ0fPAvl7rO6JoQ3cLy1hEiht2P4E6dIjA6EFNZE9VGHeTC/exec';
+    const GOOGLE_SHEETS_URL = 'https://script.google.com/macros/s/AKfycbx8h8LaYr-J9_UZRXJTEmcC9pW6F-bP_rg4G5FwbanfrVzNJijk_M-WUUj-roOwvSdf/exec';
         
-        let juegos = [];
-        
-        // Cargar datos desde Google Sheets al inicio
-        async function cargarDatos() {
-            try {
-                const response = await fetch(GOOGLE_SHEETS_URL, {
-                    method: 'GET'
-                });
+
+            let juegos = [];
+            
+            // Cargar datos desde Google Sheets al inicio
+            async function cargarDatos() {
+              try {
+                const response = await fetch(GOOGLE_SHEETS_URL); // GET simple
                 const datos = await response.json();
                 juegos = datos || [];
                 mostrarJuegos();
-            } catch (error) {
+              } catch (error) {
                 console.error('Error cargando datos:', error);
                 mostrarMensaje('⚠️ No se pudieron cargar los datos', 'error');
                 juegos = [];
                 mostrarJuegos();
+              }
             }
-        }
-        
-        document.getElementById('formulario').addEventListener('submit', async (e) => {
-            e.preventDefault();
             
-            const nuevoJuego = {
+            document.getElementById('formulario').addEventListener('submit', async (e) => {
+              e.preventDefault();
+            
+              const nuevoJuego = {
                 titulo: document.getElementById('titulo').value,
                 consola: document.getElementById('consola').value,
                 año: document.getElementById('año').value,
                 estado: document.getElementById('estado').value,
-                precio: parseFloat(document.getElementById('precio').value)
-            };
+                precio: document.getElementById('precio').value   // manda texto, ya se parsea en backend
+              };
             
-            try {
-              // Enviar a URL_2 (que replica a ambas hojas)
+              // Evitar preflight: x-www-form-urlencoded
+              const body = new URLSearchParams(nuevoJuego);
+            
+              try {
                 await fetch(GOOGLE_SHEETS_URL, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(nuevoJuego)
+                  method: 'POST',
+                  headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8'
+                  },
+                  body
                 });
-
-                
-                // Mostrar modal
+            
                 const modal = document.getElementById('modalExito');
                 modal.classList.add('show');
-                
-                // Cerrar modal después de 2 segundos
+            
                 setTimeout(() => {
-                    modal.classList.remove('show');
-                    cargarDatos();
+                  modal.classList.remove('show');
+                  cargarDatos();
                 }, 2000);
-                
+            
                 document.getElementById('formulario').reset();
-
-                
-            } catch (error) {
+              } catch (error) {
                 console.error('Error:', error);
                 mostrarMensaje('⚠️ Error al guardar', 'error');
-            }
-        });
+              }
+            });
+
         
         // Botón limpiar todo
         document.getElementById('btnLimpiar').addEventListener('click', () => {
@@ -520,6 +519,7 @@
     </script>
 </body>
 </html>
+
 
 
 
