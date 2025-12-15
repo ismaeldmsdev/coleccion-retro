@@ -418,7 +418,7 @@
               // Enviar a URL_2 (que replica a ambas hojas)
                 await fetch(GOOGLE_SHEETS_URL, {
                     method: 'POST',
-                    mode: 'no-cors',
+                    headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(nuevoJuego)
                 });
 
@@ -520,6 +520,7 @@
     </script>
 </body>
 </html>
+
 
 
 
