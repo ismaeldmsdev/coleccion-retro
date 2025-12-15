@@ -95,6 +95,9 @@
         
         .btn-danger {
             background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            width: 100%;
+            padding: 12px;
+            margin: 10px 0 0 0;
         }
         
         .mensaje {
@@ -122,9 +125,6 @@
             color: #333;
             margin: 30px 0 15px 0;
             font-size: 1.5em;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
         }
         
         .juego {
@@ -195,6 +195,12 @@
         }
         
         .empty {
+            text-align: center;
+            color: #999;
+            padding: 20px;
+        }
+        
+        .loading {
             text-align: center;
             color: #999;
             padding: 20px;
@@ -290,21 +296,41 @@
                 </div>
             </div>
             
-            <h2>
-                <span>📋 Mi colección</span>
-                <button class="btn-danger" id="btnLimpiar" style="width: auto; margin: 0;">🗑️ Limpiar todo</button>
-            </h2>
-            <div id="lista" class="empty">
-                <p>Aún no hay juegos. ¡Añade el primero!</p>
+            <h2>📋 Mi colección</h2>
+            <div id="lista" class="loading">
+                <p>⏳ Cargando datos...</p>
             </div>
+            
+            <button class="btn-danger" id="btnLimpiar">🗑️ Limpiar toda la colección</button>
         </div>
     </div>
     
     <script>
-        // ⚠️ REEMPLAZA ESTO CON TU URL DE GOOGLE SHEETS
-        const GOOGLE_SHEETS_URL = 'https://script.google.com/macros/s/AKfycbyBQ8iMqK2YTKuOye3_eKJ0fPAvl7rO6JoQ3cLy1hEiht2P4E6dIjA6EFNZE9VGHeTC/exec';
+    // Primera URL (tu cuenta principal - para guardar)
+    const GOOGLE_SHEETS_URL_1 = 'https://script.google.com/macros/s/AKfycbx8h8LaYr-J9_UZRXJTEmcC9pW6F-bP_rg4G5FwbanfrVzNJijk_M-WUUj-roOwvSdf/exec';
+
+    // Segunda URL (otra cuenta - para guardar)
+    const GOOGLE_SHEETS_URL_2 = 'https://script.google.com/macros/s/AKfycbyBQ8iMqK2YTKuOye3_eKJ0fPAvl7rO6JoQ3cLy1hEiht2P4E6dIjA6EFNZE9VGHeTC/exec';
+
         
-        let juegos = JSON.parse(localStorage.getItem('juegos')) || [];
+        let juegos = [];
+        
+        // Cargar datos desde Google Sheets al inicio
+        async function cargarDatos() {
+            try {
+                const response = await fetch(GOOGLE_SHEETS_URL_1, {
+                    method: 'GET'
+                });
+                const datos = await response.json();
+                juegos = datos || [];
+                mostrarJuegos();
+            } catch (error) {
+                console.error('Error cargando datos:', error);
+                mostrarMensaje('⚠️ No se pudieron cargar los datos', 'error');
+                juegos = [];
+                mostrarJuegos();
+            }
+        }
         
         document.getElementById('formulario').addEventListener('submit', async (e) => {
             e.preventDefault();
@@ -318,27 +344,32 @@
             };
             
             try {
-                // Enviar a Google Sheets
-                const response = await fetch(GOOGLE_SHEETS_URL, {
+                // Enviar a ambas Google Sheets
+                await fetch(GOOGLE_SHEETS_URL_1, {
                     method: 'POST',
                     mode: 'no-cors',
                     body: JSON.stringify(nuevoJuego)
                 });
                 
-                juegos.push(nuevoJuego);
-                localStorage.setItem('juegos', JSON.stringify(juegos));
+                await fetch(GOOGLE_SHEETS_URL_2, {
+                    method: 'POST',
+                    mode: 'no-cors',
+                    body: JSON.stringify(nuevoJuego)
+                });
+
                 
-                mostrarMensaje('✅ Juego añadido a tu colección y Google Sheets', 'success');
+                mostrarMensaje('✅ Juego añadido correctamente', 'success');
                 document.getElementById('formulario').reset();
-                mostrarJuegos();
                 
+                // Recargar datos desde Sheets
                 setTimeout(() => {
+                    cargarDatos();
                     document.getElementById('mensaje').style.display = 'none';
-                }, 3000);
+                }, 1000);
                 
             } catch (error) {
                 console.error('Error:', error);
-                mostrarMensaje('⚠️ Error de conexión. Se guardó localmente.', 'error');
+                mostrarMensaje('⚠️ Error al guardar', 'error');
             }
         });
         
@@ -352,14 +383,13 @@
                 return;
             }
             
-            if (confirm('⚠️ ¿Estás seguro de que quieres borrar TODOS los juegos guardados?\n\nEsta acción no se puede deshacer.')) {
+            if (confirm('⚠️ ¿Estás seguro de que quieres borrar TODOS los juegos?\n\nEsta acción no se puede deshacer y afectará a TODOS los usuarios.')) {
                 juegos = [];
-                localStorage.removeItem('juegos');
-                mostrarMensaje('🗑️ Colección borrada completamente', 'success');
+                mostrarMensaje('🗑️ Colección borrada', 'success');
                 mostrarJuegos();
                 setTimeout(() => {
                     document.getElementById('mensaje').style.display = 'none';
-                }, 3000);
+                }, 2000);
             }
         });
         
@@ -367,7 +397,6 @@
         function borrarJuego(index) {
             if (confirm(`¿Borrar "${juegos[index].titulo}"?`)) {
                 juegos.splice(index, 1);
-                localStorage.setItem('juegos', JSON.stringify(juegos));
                 mostrarJuegos();
                 mostrarMensaje('🗑️ Juego borrado', 'success');
                 setTimeout(() => {
@@ -417,8 +446,8 @@
             stats.style.display = 'block';
         }
         
-        // Mostrar juegos al cargar
-        mostrarJuegos();
+        // Cargar datos al abrir la app
+        cargarDatos();
     </script>
 </body>
 </html>
