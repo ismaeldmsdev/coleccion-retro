@@ -303,51 +303,56 @@
         <div class="card">
             <div id="mensaje" class="mensaje"></div>
             
-            <form id="formulario">
-                <div class="form-group">
-                    <label for="titulo">Título del Juego:</label>
-                    <input type="text" id="titulo" required placeholder="Ej: Super Mario Bros 3">
-                </div>
-                
-                <div class="form-group">
-                    <label for="consola">Consola:</label>
-                    <select id="consola" required>
-                        <option value="">-- Selecciona --</option>
-                        <option value="NES">NES</option>
-                        <option value="SNES">SNES</option>
-                        <option value="N64">Nintendo 64</option>
-                        <option value="GameBoy">Game Boy</option>
-                        <option value="PlayStation 1">PlayStation 1</option>
-                        <option value="PlayStation 2">PlayStation 2</option>
-                        <option value="Sega Genesis">Sega Genesis</option>
-                        <option value="Dreamcast">Dreamcast</option>
-                        <option value="Otro">Otro</option>
-                    </select>
-                </div>
-                
-                <div class="form-group">
-                    <label for="año">Año:</label>
-                    <input type="number" id="año" placeholder="Ej: 1993">
-                </div>
-                
-                <div class="form-group">
-                    <label for="estado">Estado:</label>
-                    <select id="estado" required>
-                        <option value="">-- Selecciona --</option>
-                        <option value="CIB">CIB (Completo en caja)</option>
-                        <option value="Suelto">Suelto</option>
-                        <option value="Completo">Completo (sin caja)</option>
-                        <option value="Caja y manual">Caja y manual</option>
-                    </select>
-                </div>
-                
-                <div class="form-group">
-                    <label for="precio">Precio pagado (€):</label>
-                    <input type="number" id="precio" step="0.01" required placeholder="Ej: 10€">
-                </div>
-                
-                <button type="submit">➕ Añadir a colección</button>
+            <form
+              id="formulario"
+              method="POST"
+              action="https://script.google.com/macros/s/AKfycbw54L6UEgeRtG9eIcF4cdOKUDPNDmi5kd9fIfi8Dv9ny1ITbId84-LuHVq4Qw4dpWWx/exec">
+            
+              <div class="form-group">
+                <label for="titulo">Título del Juego:</label>
+                <input type="text" id="titulo" name="titulo" required placeholder="Ej: Super Mario Bros 3">
+              </div>
+              
+              <div class="form-group">
+                <label for="consola">Consola:</label>
+                <select id="consola" name="consola" required>
+                  <option value="">-- Selecciona --</option>
+                  <option value="NES">NES</option>
+                  <option value="SNES">SNES</option>
+                  <option value="N64">Nintendo 64</option>
+                  <option value="GameBoy">Game Boy</option>
+                  <option value="PlayStation 1">PlayStation 1</option>
+                  <option value="PlayStation 2">PlayStation 2</option>
+                  <option value="Sega Genesis">Sega Genesis</option>
+                  <option value="Dreamcast">Dreamcast</option>
+                  <option value="Otro">Otro</option>
+                </select>
+              </div>
+              
+              <div class="form-group">
+                <label for="año">Año:</label>
+                <input type="number" id="año" name="año" placeholder="Ej: 1993">
+              </div>
+              
+              <div class="form-group">
+                <label for="estado">Estado:</label>
+                <select id="estado" name="estado" required>
+                  <option value="">-- Selecciona --</option>
+                  <option value="CIB">CIB (Completo en caja)</option>
+                  <option value="Suelto">Suelto</option>
+                  <option value="Completo">Completo (sin caja)</option>
+                  <option value="Caja y manual">Caja y manual</option>
+                </select>
+              </div>
+              
+              <div class="form-group">
+                <label for="precio">Precio pagado (€):</label>
+                <input type="number" id="precio" name="precio" step="0.01" required placeholder="Ej: 10€">
+              </div>
+              
+              <button type="submit">➕ Añadir a colección</button>
             </form>
+
         </div>
         
         <div class="card">
@@ -519,6 +524,7 @@
     </script>
 </body>
 </html>
+
 
 
 
