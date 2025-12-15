@@ -407,45 +407,6 @@
               }
             }
             
-            document.getElementById('formulario').addEventListener('submit', async (e) => {
-              e.preventDefault();
-            
-              const nuevoJuego = {
-                titulo: document.getElementById('titulo').value,
-                consola: document.getElementById('consola').value,
-                año: document.getElementById('año').value,
-                estado: document.getElementById('estado').value,
-                precio: document.getElementById('precio').value   // manda texto, ya se parsea en backend
-              };
-            
-              // Evitar preflight: x-www-form-urlencoded
-              const body = new URLSearchParams(nuevoJuego);
-            
-              try {
-                await fetch(GOOGLE_SHEETS_URL, {
-                  method: 'POST',
-                  headers: {
-                    'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8'
-                  },
-                  body
-                });
-            
-                const modal = document.getElementById('modalExito');
-                modal.classList.add('show');
-            
-                setTimeout(() => {
-                  modal.classList.remove('show');
-                  cargarDatos();
-                }, 2000);
-            
-                document.getElementById('formulario').reset();
-              } catch (error) {
-                console.error('Error:', error);
-                mostrarMensaje('⚠️ Error al guardar', 'error');
-              }
-            });
-
-        
         // Botón limpiar todo
         document.getElementById('btnLimpiar').addEventListener('click', () => {
             if (juegos.length === 0) {
@@ -524,6 +485,7 @@
     </script>
 </body>
 </html>
+
 
 
 
