@@ -1,498 +1,194 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>📦 Colección Retro</title>
-    <style>
-                .loading {
-            text-align: center;
-            color: #999;
-            padding: 20px;
-        }
-                .modal {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.5);
-            justify-content: center;
-            align-items: center;
-            z-index: 1000;
-        }
-
-        .modal.show {
-            display: flex;
-            animation: fadeIn 0.3s ease-in;
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; transform: scale(0.9); }
-            to { opacity: 1; transform: scale(1); }
-        }
-
-        .modal-content {
-            background: white;
-            border-radius: 16px;
-            padding: 40px;
-            text-align: center;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
-            animation: slideUp 0.4s ease-out;
-        }
-
-        @keyframes slideUp {
-            from { transform: translateY(20px); opacity: 0; }
-            to { transform: translateY(0); opacity: 1; }
-        }
-
-        .modal-icon {
-            font-size: 4em;
-            margin-bottom: 15px;
-            animation: bounce 0.6s ease-out;
-        }
-
-        @keyframes bounce {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-15px); }
-        }
-
-        .modal-title {
-            font-size: 1.5em;
-            font-weight: bold;
-            color: #333;
-            margin-bottom: 10px;
-        }
-
-        .modal-text {
-            color: #666;
-            font-size: 1em;
-        }
-
-
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-        
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
-            padding: 20px;
-        }
-        
-        .container {
-            max-width: 600px;
-            margin: 0 auto;
-        }
-        
-        header {
-            text-align: center;
-            color: white;
-            margin-bottom: 30px;
-        }
-        
-        header h1 {
-            font-size: 2em;
-            margin-bottom: 5px;
-        }
-        
-        header p {
-            opacity: 0.9;
-        }
-        
-        .card {
-            background: white;
-            border-radius: 12px;
-            padding: 25px;
-            margin-bottom: 20px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
-        }
-        
-        .form-group {
-            margin-bottom: 15px;
-        }
-        
-        label {
-            display: block;
-            font-weight: 600;
-            margin-bottom: 8px;
-            color: #333;
-        }
-        
-        input, select {
-            width: 100%;
-            padding: 12px;
-            border: 2px solid #e0e0e0;
-            border-radius: 8px;
-            font-size: 1em;
-            transition: border-color 0.3s;
-        }
-        
-        input:focus, select:focus {
-            outline: none;
-            border-color: #667eea;
-        }
-        
-        button {
-            width: 100%;
-            padding: 12px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            border: none;
-            border-radius: 8px;
-            font-weight: 600;
-            font-size: 1.1em;
-            cursor: pointer;
-            transition: transform 0.2s;
-            margin-bottom: 10px;
-        }
-        
-        button:hover {
-            transform: translateY(-2px);
-        }
-        
-        button:active {
-            transform: translateY(0);
-        }
-        
-        .btn-danger {
-            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
-            width: 100%;
-            padding: 12px;
-            margin: 10px 0 0 0;
-        }
-        
-        .mensaje {
-            padding: 12px;
-            border-radius: 8px;
-            margin-bottom: 15px;
-            display: none;
-        }
-        
-        .mensaje.success {
-            background: #efe;
-            color: #3c3;
-            border-left: 4px solid #3c3;
-            display: block;
-        }
-        
-        .mensaje.error {
-            background: #fee;
-            color: #c33;
-            border-left: 4px solid #c33;
-            display: block;
-        }
-        
-        h2 {
-            color: #333;
-            margin: 30px 0 15px 0;
-            font-size: 1.5em;
-        }
-        
-        .juego {
-            background: #f9f9f9;
-            border-left: 4px solid #667eea;
-            padding: 15px;
-            margin-bottom: 10px;
-            border-radius: 6px;
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-start;
-        }
-        
-        .juego-content {
-            flex: 1;
-        }
-        
-        .juego-titulo {
-            font-weight: bold;
-            color: #333;
-            margin-bottom: 5px;
-        }
-        
-        .juego-info {
-            font-size: 0.9em;
-            color: #666;
-            line-height: 1.6;
-        }
-        
-        .juego-precio {
-            color: #667eea;
-            font-weight: bold;
-            margin-top: 8px;
-        }
-        
-        .btn-delete {
-            background: #ff6b6b;
-            border: none;
-            color: white;
-            padding: 6px 12px;
-            border-radius: 4px;
-            font-size: 0.9em;
-            cursor: pointer;
-            margin-left: 10px;
-            min-width: 60px;
-        }
-        
-        .btn-delete:hover {
-            background: #ff5252;
-        }
-        
-        .stats {
-            background: #f0f7ff;
-            border-left: 4px solid #667eea;
-            padding: 15px;
-            border-radius: 6px;
-            margin-bottom: 20px;
-        }
-        
-        .stats-item {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 8px;
-        }
-        
-        .stats-item:last-child {
-            margin-bottom: 0;
-        }
-        
-        .empty {
-            text-align: center;
-            color: #999;
-            padding: 20px;
-        }
-        
-        .loading {
-            text-align: center;
-            color: #999;
-            padding: 20px;
-        }
-        
-        @media (max-width: 600px) {
-            header h1 {
-                font-size: 1.5em;
-            }
-            
-            .card {
-                padding: 15px;
-            }
-            
-            .juego {
-                flex-direction: column;
-            }
-            
-            .btn-delete {
-                margin-left: 0;
-                margin-top: 10px;
-                width: 100%;
-            }
-        }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>📦 Colección Retro</title>
+  <style>
+    /* TODO tu CSS tal cual, lo puedes pegar aquí sin tocarlo */
+    /* ... (usa exactamente el CSS que ya tenías) ... */
+  </style>
 </head>
 <body>
-    <div class="container">
-        <header>
-            <h1>🎮 Colección Retro</h1>
-            <p>Gestiona tu colección de juegos</p>
-        </header>
-        
-        <div class="card">
-            <div id="mensaje" class="mensaje"></div>
-            
-            <form
-              id="formulario"
-              method="POST"
-              action="https://script.google.com/macros/s/AKfycbw54L6UEgeRtG9eIcF4cdOKUDPNDmi5kd9fIfi8Dv9ny1ITbId84-LuHVq4Qw4dpWWx/exec">
-            
-              <div class="form-group">
-                <label for="titulo">Título del Juego:</label>
-                <input type="text" id="titulo" name="titulo" required placeholder="Ej: Super Mario Bros 3">
-              </div>
-              
-              <div class="form-group">
-                <label for="consola">Consola:</label>
-                <select id="consola" name="consola" required>
-                  <option value="">-- Selecciona --</option>
-                  <option value="NES">NES</option>
-                  <option value="SNES">SNES</option>
-                  <option value="N64">Nintendo 64</option>
-                  <option value="GameBoy">Game Boy</option>
-                  <option value="PlayStation 1">PlayStation 1</option>
-                  <option value="PlayStation 2">PlayStation 2</option>
-                  <option value="Sega Genesis">Sega Genesis</option>
-                  <option value="Dreamcast">Dreamcast</option>
-                  <option value="Otro">Otro</option>
-                </select>
-              </div>
-              
-              <div class="form-group">
-                <label for="año">Año:</label>
-                <input type="number" id="año" name="año" placeholder="Ej: 1993">
-              </div>
-              
-              <div class="form-group">
-                <label for="estado">Estado:</label>
-                <select id="estado" name="estado" required>
-                  <option value="">-- Selecciona --</option>
-                  <option value="CIB">CIB (Completo en caja)</option>
-                  <option value="Suelto">Suelto</option>
-                  <option value="Completo">Completo (sin caja)</option>
-                  <option value="Caja y manual">Caja y manual</option>
-                </select>
-              </div>
-              
-              <div class="form-group">
-                <label for="precio">Precio pagado (€):</label>
-                <input type="number" id="precio" name="precio" step="0.01" required placeholder="Ej: 10€">
-              </div>
-              
-              <button type="submit">➕ Añadir a colección</button>
-            </form>
+  <div class="container">
+    <header>
+      <h1>🎮 Colección Retro</h1>
+      <p>Gestiona tu colección de juegos</p>
+    </header>
 
+    <div class="card">
+      <div id="mensaje" class="mensaje"></div>
+
+      <form id="formulario">
+        <div class="form-group">
+          <label for="titulo">Título del Juego:</label>
+          <input type="text" id="titulo" required placeholder="Ej: Super Mario Bros 3">
         </div>
-        
-        <div class="card">
-            <div id="stats" class="stats" style="display:none;">
-                <div class="stats-item">
-                    <span>Total invertido:</span>
-                    <strong>€<span id="total">0.00</span></strong>
-                </div>
-                <div class="stats-item">
-                    <span>Juegos en colección:</span>
-                    <strong id="cantidad">0</strong>
-                </div>
-            </div>
-            
-            <h2>📋 Mi colección</h2>
-            <div id="lista" class="loading">
-                <p>⏳ Cargando datos...</p>
-            </div>
-            
-                      <button class="btn-danger" id="btnLimpiar">🗑️ Limpiar toda la colección</button>
+
+        <div class="form-group">
+          <label for="consola">Consola:</label>
+          <select id="consola" required>
+            <option value="">-- Selecciona --</option>
+            <option value="NES">NES</option>
+            <option value="SNES">SNES</option>
+            <option value="N64">Nintendo 64</option>
+            <option value="GameBoy">Game Boy</option>
+            <option value="PlayStation 1">PlayStation 1</option>
+            <option value="PlayStation 2">PlayStation 2</option>
+            <option value="Sega Genesis">Sega Genesis</option>
+            <option value="Dreamcast">Dreamcast</option>
+            <option value="Otro">Otro</option>
+          </select>
         </div>
+
+        <div class="form-group">
+          <label for="año">Año:</label>
+          <input type="number" id="año" placeholder="Ej: 1993">
+        </div>
+
+        <div class="form-group">
+          <label for="estado">Estado:</label>
+          <select id="estado" required>
+            <option value="">-- Selecciona --</option>
+            <option value="CIB">CIB (Completo en caja)</option>
+            <option value="Suelto">Suelto</option>
+            <option value="Completo">Completo (sin caja)</option>
+            <option value="Caja y manual">Caja y manual</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="precio">Precio pagado (€):</label>
+          <input type="number" id="precio" step="0.01" required placeholder="Ej: 10€">
+        </div>
+
+        <button type="submit">➕ Añadir a colección</button>
+      </form>
     </div>
 
-    <div id="modalExito" class="modal">
-        <div class="modal-content">
-            <div class="modal-icon">✅</div>
-            <div class="modal-title">¡Juego añadido!</div>
-            <div class="modal-text">Se ha guardado correctamente</div>
+    <div class="card">
+      <div id="stats" class="stats" style="display:none;">
+        <div class="stats-item">
+          <span>Total invertido:</span>
+          <strong>€<span id="total">0.00</span></strong>
         </div>
+        <div class="stats-item">
+          <span>Juegos en colección:</span>
+          <strong id="cantidad">0</strong>
+        </div>
+      </div>
+
+      <h2>📋 Mi colección</h2>
+      <div id="lista" class="loading">
+        <p>⏳ Cargando datos...</p>
+      </div>
+
+      <button class="btn-danger" id="btnLimpiar">🗑️ Limpiar toda la colección (solo visual)</button>
     </div>
+  </div>
 
-    
-    <script>
-    // URL principal (URL_2 - la que escribirá en ambas hojas)
-    const GOOGLE_SHEETS_URL = 'https://script.google.com/macros/s/AKfycbw54L6UEgeRtG9eIcF4cdOKUDPNDmi5kd9fIfi8Dv9ny1ITbId84-LuHVq4Qw4dpWWx/exec';
-        
+  <div id="modalExito" class="modal">
+    <div class="modal-content">
+      <div class="modal-icon">✅</div>
+      <div class="modal-title">¡Juego añadido!</div>
+      <div class="modal-text">Se ha guardado correctamente</div>
+    </div>
+  </div>
 
-            let juegos = [];
-            
-            // Cargar datos desde Google Sheets al inicio
-            async function cargarDatos() {
-              try {
-                const response = await fetch(GOOGLE_SHEETS_URL); // GET simple
-                const datos = await response.json();
-                juegos = datos || [];
-                mostrarJuegos();
-              } catch (error) {
-                console.error('Error cargando datos:', error);
-                mostrarMensaje('⚠️ No se pudieron cargar los datos', 'error');
-                juegos = [];
-                mostrarJuegos();
-              }
-            }
-            
-        // Botón limpiar todo
-        document.getElementById('btnLimpiar').addEventListener('click', () => {
-            if (juegos.length === 0) {
-                mostrarMensaje('⚠️ No hay juegos para borrar', 'error');
-                setTimeout(() => {
-                    document.getElementById('mensaje').style.display = 'none';
-                }, 2000);
-                return;
-            }
-            
-            if (confirm('⚠️ ¿Estás seguro de que quieres borrar TODOS los juegos?\n\nEsta acción no se puede deshacer y afectará a TODOS los usuarios.')) {
-                juegos = [];
-                mostrarMensaje('🗑️ Colección borrada', 'success');
-                mostrarJuegos();
-                setTimeout(() => {
-                    document.getElementById('mensaje').style.display = 'none';
-                }, 2000);
-            }
-        });
-        
-        // Borrar juego individual
-        function borrarJuego(index) {
-            if (confirm(`¿Borrar "${juegos[index].titulo}"?`)) {
-                juegos.splice(index, 1);
-                mostrarJuegos();
-                mostrarMensaje('🗑️ Juego borrado', 'success');
-                setTimeout(() => {
-                    document.getElementById('mensaje').style.display = 'none';
-                }, 2000);
-            }
-        }
-        
-        function mostrarMensaje(texto, tipo) {
-            const mensaje = document.getElementById('mensaje');
-            mensaje.textContent = texto;
-            mensaje.className = `mensaje ${tipo}`;
-        }
-        
-        function mostrarJuegos() {
-            const lista = document.getElementById('lista');
-            const stats = document.getElementById('stats');
-            
-            if (juegos.length === 0) {
-                lista.innerHTML = '<p class="empty">Aún no hay juegos. ¡Añade el primero!</p>';
-                stats.style.display = 'none';
-                return;
-            }
-            
-            let html = '';
-            let total = 0;
-            
-            juegos.forEach((juego, index) => {
-                total += juego.precio;
-                html += `
-                    <div class="juego">
-                        <div class="juego-content">
-                            <div class="juego-titulo">${juego.titulo}</div>
-                            <div class="juego-info">
-                                <strong>${juego.consola}</strong> • ${juego.año} • ${juego.estado}
-                            </div>
-                            <div class="juego-precio">💰 €${juego.precio.toFixed(2)}</div>
-                        </div>
-                        <button class="btn-delete" onclick="borrarJuego(${index})">❌ Borrar</button>
-                    </div>
-                `;
-            });
-            
-            lista.innerHTML = html;
-            document.getElementById('total').textContent = total.toFixed(2);
-            document.getElementById('cantidad').textContent = juegos.length;
-            stats.style.display = 'block';
-        }
-        
-        // Cargar datos al abrir la app
-        cargarDatos();
-    </script>
+  <script>
+    let juegos = [];
+
+    function cargarDatos() {
+      google.script.run
+        .withSuccessHandler((datos) => {
+          juegos = datos || [];
+          mostrarJuegos();
+        })
+        .getJuegos();
+    }
+
+    document.getElementById('formulario').addEventListener('submit', (e) => {
+      e.preventDefault();
+
+      const nuevoJuego = {
+        titulo: document.getElementById('titulo').value,
+        consola: document.getElementById('consola').value,
+        año: document.getElementById('año').value,
+        estado: document.getElementById('estado').value,
+        precio: document.getElementById('precio').value
+      };
+
+      google.script.run
+        .withSuccessHandler(() => {
+          const modal = document.getElementById('modalExito');
+          modal.classList.add('show');
+          setTimeout(() => {
+            modal.classList.remove('show');
+          }, 1500);
+
+          document.getElementById('formulario').reset();
+          cargarDatos();
+        })
+        .withFailureHandler((err) => {
+          console.error(err);
+          mostrarMensaje('⚠️ Error al guardar', 'error');
+        })
+        .addJuego(nuevoJuego);
+    });
+
+    document.getElementById('btnLimpiar').addEventListener('click', () => {
+      if (juegos.length === 0) {
+        mostrarMensaje('⚠️ No hay juegos para borrar (solo visualmente)', 'error');
+        return;
+      }
+      if (confirm('Esto solo limpia la vista, no borra de la hoja. ¿Continuar?')) {
+        juegos = [];
+        mostrarJuegos();
+        mostrarMensaje('🗑️ Vista limpiada (no se ha borrado la hoja)', 'success');
+      }
+    });
+
+    function mostrarMensaje(texto, tipo) {
+      const mensaje = document.getElementById('mensaje');
+      mensaje.textContent = texto;
+      mensaje.className = `mensaje ${tipo}`;
+    }
+
+    function mostrarJuegos() {
+      const lista = document.getElementById('lista');
+      const stats = document.getElementById('stats');
+
+      if (!juegos || juegos.length === 0) {
+        lista.innerHTML = '<p class="empty">Aún no hay juegos. ¡Añade el primero!</p>';
+        stats.style.display = 'none';
+        return;
+      }
+
+      let html = '';
+      let total = 0;
+
+      juegos.forEach((juego, index) => {
+        total += Number(juego.precio) || 0;
+        html += `
+          <div class="juego">
+            <div class="juego-content">
+              <div class="juego-titulo">${juego.titulo}</div>
+              <div class="juego-info">
+                <strong>${juego.consola}</strong> • ${juego.año} • ${juego.estado}
+              </div>
+              <div class="juego-precio">💰 €${Number(juego.precio).toFixed(2)}</div>
+            </div>
+          </div>`;
+      });
+
+      lista.innerHTML = html;
+      document.getElementById('total').textContent = total.toFixed(2);
+      document.getElementById('cantidad').textContent = juegos.length;
+      stats.style.display = 'block';
+    }
+
+    // Cargar datos al abrir la app
+    cargarDatos();
+  </script>
 </body>
 </html>
-
-
-
-
-
-
-
-
-
-
-
